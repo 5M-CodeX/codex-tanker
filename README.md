@@ -42,6 +42,8 @@ This is a custom script for FiveM (a modification framework for Grand Theft Auto
 ## Credits
 
 - The script was developed by TheStoicBear.
+- Suggestion @TheStoicMW💚
+
 
 ## License
 
