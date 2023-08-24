@@ -4,8 +4,7 @@ local tanker = nil
 RegisterCommand("draintanker", function()
     local playerVehicle = GetVehiclePedIsIn(PlayerPedId(), false)
     if DoesEntityExist(playerVehicle) and tanker == playerVehicle then
-        local currentVelocity = GetEntityVelocity(tanker)
-        SetEntityVelocity(tanker, currentVelocity * (1 / Config.slowdownFactor)) -- Reset the speed
+        SetVehicleMaxSpeed(tanker, 9999.0) -- Reset the maximum speed
     end
 end, false)
 
@@ -39,10 +38,11 @@ Citizen.CreateThread(function()
         end
 
         if isFilling then
-            Config.fillDuration = Config.fillDuration - 1
-
             if Config.fillDuration <= 0 then
                 FinishFilling()
+            else
+                Config.fillDuration = Config.fillDuration - 1
+                DrawProgressBar(0.5, 0.9, 0.2, 0.02, Config.fillDuration / 10000, 255, 0, 0, 150)
             end
         end
     end
@@ -63,8 +63,8 @@ function StartFilling()
     if isAllowed then
         isFilling = true
         tanker = playerVehicle
-
-        SetEntityCollision(tanker, false, false)
+        
+        ShowNotification("~g~Filling the tanker...")
     else
         ShowNotification("~r~You can't fill this vehicle!")
     end
@@ -74,12 +74,9 @@ function FinishFilling()
     isFilling = false
     Config.fillDuration = 10000
 
+    SetVehicleMaxSpeed(tanker, Config.slowdownFactor * 9999.0) -- Slow down the tanker's maximum speed
+
     ShowNotification("~g~Tanker Filled!")
-
-    local currentVelocity = GetEntityVelocity(tanker)
-    SetEntityVelocity(tanker, currentVelocity * Config.slowdownFactor)
-
-    SetEntityCollision(tanker, true, true)
 end
 
 function DrawText3D(x, y, z, text)
@@ -100,4 +97,9 @@ function DrawText3D(x, y, z, text)
         AddTextComponentString(text)
         DrawText(_x, _y)
     end
+end
+
+function DrawProgressBar(x, y, width, height, progress, r, g, b, a)
+    DrawRect(x, y, width, height, 0, 0, 0, 100)
+    DrawRect(x - (width / 2) + (progress * width / 2), y, progress * width, height, r, g, b, a)
 end
