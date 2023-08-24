@@ -4,7 +4,7 @@ fillDuration = 10000, -- 10 seconds in milliseconds
 slowdownFactor = 0.5,
 -- Allowed vehicle models
 allowedVehicles = {
-  "tanker",
+  "fd1",
   "firetruk"
 },
 -- Refill locations
