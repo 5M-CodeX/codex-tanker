@@ -1,6 +1,11 @@
 # CodeX Tanker
 
+![SugarTank](https://github.com/5M-CodeX/codex-tanker/assets/112611821/66c89b9c-644e-4346-84eb-2b4370a11ba1)
+
 This is a custom script for FiveM (a modification framework for Grand Theft Auto V) that allows players to fill up water tankers from designated refill locations.
+
+
+# This is still in ALPHA STAGES
 
 ## Features
 
