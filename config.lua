@@ -8,7 +8,6 @@ Config = {
         "firetruk",
         "firetruk"
     },
-	accelerationSlowdownFactor = 1.0,
     -- Refill locations
     refillLocations = {
         { x = 1240.08, y = -1479.96, z = 34.76 }, -- Example location 1
