@@ -1,12 +1,28 @@
+-- _____     ______     ______   ______    
+--/\  __-.  /\  __ \   /\__  _\ /\  __ \   
+--\ \ \/\ \ \ \  __ \  \/_/\ \/ \ \  __ \  
+-- \ \____-  \ \_\ \_\    \ \_\  \ \_\ \_\ 
+--  \/____/   \/_/\/_/     \/_/   \/_/\/_/ 
+--                                       
 local isFilling = false
 local tanker = nil
+local originalMaxSpeed = 0.0
+local countdownTimer = 0
+-- _____     ______     ______   ______    
+--/\  __-.  /\  __ \   /\__  _\ /\  __ \   
+--\ \ \/\ \ \ \  __ \  \/_/\ \/ \ \  __ \  
+-- \ \____-  \ \_\ \_\    \ \_\  \ \_\ \_\ 
+--  \/____/   \/_/\/_/     \/_/   \/_/\/_/ 
+--                                         
 
-RegisterCommand("draintanker", function()
-    local playerVehicle = GetVehiclePedIsIn(PlayerPedId(), false)
-    if DoesEntityExist(playerVehicle) and tanker == playerVehicle then
-        SetVehicleMaxSpeed(tanker, 9999.0) -- Reset the maximum speed
-    end
-end, false)
+
+
+-- ______   __     __         __         __     __   __     ______    
+--/\  ___\ /\ \   /\ \       /\ \       /\ \   /\ "-.\ \   /\  ___\   
+--\ \  __\ \ \ \  \ \ \____  \ \ \____  \ \ \  \ \ \-.  \  \ \ \__ \  
+-- \ \_\    \ \_\  \ \_____\  \ \_____\  \ \_\  \ \_\\"\_\  \ \_____\ 
+--  \/_/     \/_/   \/_____/   \/_____/   \/_/   \/_/ \/_/   \/_____/ 
+--                                                                    
 
 Citizen.CreateThread(function()
     for _, location in ipairs(Config.refillLocations) do
@@ -38,11 +54,12 @@ Citizen.CreateThread(function()
         end
 
         if isFilling then
-            if Config.fillDuration <= 0 then
+            if countdownTimer <= 0 then
                 FinishFilling()
             else
-                Config.fillDuration = Config.fillDuration - 1
-                DrawProgressBar(0.5, 0.9, 0.2, 0.02, Config.fillDuration / 10000, 255, 0, 0, 150)
+                countdownTimer = countdownTimer - 1000
+                local progress = countdownTimer / Config.fillDuration
+                DrawText3D(playerCoords.x, playerCoords.y, playerCoords.z + 1.0, "Filling: " .. math.floor(progress * (Config.fillDuration / 1000)) .. "s")
             end
         end
     end
@@ -63,6 +80,7 @@ function StartFilling()
     if isAllowed then
         isFilling = true
         tanker = playerVehicle
+        countdownTimer = Config.fillDuration
         
         ShowNotification("~g~Filling the tanker...")
     else
@@ -72,13 +90,58 @@ end
 
 function FinishFilling()
     isFilling = false
-    Config.fillDuration = 10000
+    countdownTimer = 0 -- Reset the countdown timer
 
-    SetVehicleMaxSpeed(tanker, Config.slowdownFactor * 9999.0) -- Slow down the tanker's maximum speed
+    SetVehicleMaxSpeed(tanker, Config.maxSpeedMph * 0.44704) -- Convert to meters per second
+    SetVehicleEngineOn(tanker, true, true, true) -- Turn on the engine
+    SetVehicleJetEngineOn(tanker, true) -- Turn on the jet engine
 
     ShowNotification("~g~Tanker Filled!")
 end
 
+function ResetTankerProperties()
+    SetVehicleMaxSpeed(tanker, originalMaxSpeed) -- Reset the vehicle's max speed to the original value
+    SetVehicleEngineOn(tanker, true, true, true) -- Turn on the engine
+end
+-- ______   __     __         __         __     __   __     ______    
+--/\  ___\ /\ \   /\ \       /\ \       /\ \   /\ "-.\ \   /\  ___\   
+--\ \  __\ \ \ \  \ \ \____  \ \ \____  \ \ \  \ \ \-.  \  \ \ \__ \  
+-- \ \_\    \ \_\  \ \_____\  \ \_____\  \ \_\  \ \_\\"\_\  \ \_____\ 
+--  \/_/     \/_/   \/_____/   \/_____/   \/_/   \/_/ \/_/   \/_____/ 
+--
+
+
+
+
+-- ______     __    __     _____     ______    
+--/\  ___\   /\ "-./  \   /\  __-.  /\  ___\   
+--\ \ \____  \ \ \-./\ \  \ \ \/\ \ \ \___  \  
+-- \ \_____\  \ \_\ \ \_\  \ \____-  \/\_____\ 
+--  \/_____/   \/_/  \/_/   \/____/   \/_____/ 
+--                                             
+RegisterCommand("draintanker", function()
+    local playerVehicle = GetVehiclePedIsIn(PlayerPedId(), false)
+    if DoesEntityExist(playerVehicle) and tanker == playerVehicle then
+        ResetTankerProperties()
+        ShowNotification("Tanker Drained!")
+    end
+end, false)
+-- ______     __    __     _____     ______    
+--/\  ___\   /\ "-./  \   /\  __-.  /\  ___\   
+--\ \ \____  \ \ \-./\ \  \ \ \/\ \ \ \___  \  
+-- \ \_____\  \ \_\ \ \_\  \ \____-  \/\_____\ 
+--  \/_____/   \/_/  \/_/   \/____/   \/_____/ 
+--                                             
+
+
+
+
+-- __   __     ______     ______   __     ______   __     ______     ______     ______   __     ______     __   __     ______        ______     ______     ______     ______   __     ______     __   __       
+--/\ "-.\ \   /\  __ \   /\__  _\ /\ \   /\  ___\ /\ \   /\  ___\   /\  __ \   /\__  _\ /\ \   /\  __ \   /\ "-.\ \   /\  ___\      /\  ___\   /\  ___\   /\  ___\   /\__  _\ /\ \   /\  __ \   /\ "-.\ \      
+--\ \ \-.  \  \ \ \/\ \  \/_/\ \/ \ \ \  \ \  __\ \ \ \  \ \ \____  \ \  __ \  \/_/\ \/ \ \ \  \ \ \/\ \  \ \ \-.  \  \ \___  \     \ \___  \  \ \  __\   \ \ \____  \/_/\ \/ \ \ \  \ \ \/\ \  \ \ \-.  \     
+-- \ \_\\"\_\  \ \_____\    \ \_\  \ \_\  \ \_\    \ \_\  \ \_____\  \ \_\ \_\    \ \_\  \ \_\  \ \_____\  \ \_\\"\_\  \/\_____\     \/\_____\  \ \_____\  \ \_____\    \ \_\  \ \_\  \ \_____\  \ \_\\"\_\    
+--  \/_/ \/_/   \/_____/     \/_/   \/_/   \/_/     \/_/   \/_____/   \/_/\/_/     \/_/   \/_/   \/_____/   \/_/ \/_/   \/_____/      \/_____/   \/_____/   \/_____/     \/_/   \/_/   \/_____/   \/_/ \/_/    
+--                                                                                                                                                                                                             
 function DrawText3D(x, y, z, text)
     local onScreen, _x, _y = World3dToScreen2d(x, y, z)
     local scale = 0.35
@@ -99,7 +162,32 @@ function DrawText3D(x, y, z, text)
     end
 end
 
-function DrawProgressBar(x, y, width, height, progress, r, g, b, a)
+function DrawProgressBar(x, y, width, height, fillDuration, r, g, b, a)
+    local maxFillDuration = 10000
+    local progress = 1 - (fillDuration / maxFillDuration)
+    local progressBarWidth = progress * width
+    
     DrawRect(x, y, width, height, 0, 0, 0, 100)
-    DrawRect(x - (width / 2) + (progress * width / 2), y, progress * width, height, r, g, b, a)
+    DrawRect(x - (width / 2) + (progressBarWidth / 2), y, progressBarWidth, height, r, g, b, a)
 end
+
+-- Define a function to send tanker notifications
+function ShowNotification(message)
+    if GetResourceState("ModernHUD") == "started" then
+        exports["ModernHUD"]:AndyyyNotify({
+            title = "<p style='color: #34eb52;'>Tanker Filling:</p>",
+            message = message,
+            icon = "fa-solid fa-truck-pickup",
+            colorHex = "#34eb52",
+            timeout = 8000
+        })
+    else
+        TriggerEvent('chatMessage', '^3[Tanker]', { 255, 255, 255 }, message)
+    end
+end
+-- __   __     ______     ______   __     ______   __     ______     ______     ______   __     ______     __   __     ______        ______     ______     ______     ______   __     ______     __   __       
+--/\ "-.\ \   /\  __ \   /\__  _\ /\ \   /\  ___\ /\ \   /\  ___\   /\  __ \   /\__  _\ /\ \   /\  __ \   /\ "-.\ \   /\  ___\      /\  ___\   /\  ___\   /\  ___\   /\__  _\ /\ \   /\  __ \   /\ "-.\ \      
+--\ \ \-.  \  \ \ \/\ \  \/_/\ \/ \ \ \  \ \  __\ \ \ \  \ \ \____  \ \  __ \  \/_/\ \/ \ \ \  \ \ \/\ \  \ \ \-.  \  \ \___  \     \ \___  \  \ \  __\   \ \ \____  \/_/\ \/ \ \ \  \ \ \/\ \  \ \ \-.  \     
+-- \ \_\\"\_\  \ \_____\    \ \_\  \ \_\  \ \_\    \ \_\  \ \_____\  \ \_\ \_\    \ \_\  \ \_\  \ \_____\  \ \_\\"\_\  \/\_____\     \/\_____\  \ \_____\  \ \_____\    \ \_\  \ \_\  \ \_____\  \ \_\\"\_\    
+--  \/_/ \/_/   \/_____/     \/_/   \/_/   \/_/     \/_/   \/_____/   \/_/\/_/     \/_/   \/_/   \/_____/   \/_/ \/_/   \/_____/      \/_____/   \/_____/   \/_____/     \/_/   \/_/   \/_____/   \/_/ \/_/    
+--  
