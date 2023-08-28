@@ -1,16 +1,18 @@
 Config = {
--- Filling configuration
-fillDuration = 10000, -- 10 seconds in milliseconds
-slowdownFactor = 0.5,
--- Allowed vehicle models
-allowedVehicles = {
-  "fd1",
-  "firetruk"
-},
--- Refill locations
-refillLocations = {
-    { x = 100.0, y = -200.0, z = 30.0 }, -- Example location 1
-    { x = -300.0, y = 500.0, z = 20.0 }, -- Example location 2
-    -- Add more refill locations as needed
-   }
+    -- Filling configuration
+    fillDuration = 100000, -- 10 seconds in milliseconds
+    -- Max speed in miles per hour (converted to meters per second)
+    maxSpeedMph = 40.0,
+    -- Allowed vehicle models
+    allowedVehicles = {
+        "firetruk",
+        "firetruk"
+    },
+	accelerationSlowdownFactor = 1.0,
+    -- Refill locations
+    refillLocations = {
+        { x = 1240.08, y = -1479.96, z = 34.76 }, -- Example location 1
+        { x = 1556.88, y = 3901.96, z = 31.16 }, -- Example location 2
+        { x = -665.48, y = 6167.13, z = 1.07 }, -- Example location 3
+    }
 }
