@@ -4,9 +4,6 @@
 
 This is a custom script for FiveM (a modification framework for Grand Theft Auto V) that allows players to fill up water tankers from designated refill locations.
 
-
-# This is still in ALPHA STAGES
-
 ## Features
 
 - Players can approach designated refill locations to start filling the water tanker.
